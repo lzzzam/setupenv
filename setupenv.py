@@ -3,9 +3,9 @@ import os
 
 tool_dir = "./tool"
 
-arm_none_eabi_url = "https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-darwin-x86_64-arm-none-eabi.tar.xz"
-arm_none_eabi_tar = "gcc-arm-11.2-2022.02-darwin-x86_64-arm-none-eabi.tar.xz"
-arm_none_eabi_dir = "gcc-arm-11.2-2022.02-darwin-x86_64-arm-none-eabi"
+arm_none_eabi_url = "https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-mac.tar.bz2"
+arm_none_eabi_tar = "gcc-arm-none-eabi-10.3-2021.10-mac.tar.bz2"
+arm_none_eabi_dir = "gcc-arm-none-eabi-10.3-2021.10"
 
 qemu_url          = "https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v7.0.0-1/xpack-qemu-arm-7.0.0-1-darwin-x64.tar.gz"
 qemu_tar          = "xpack-qemu-arm-7.0.0-1-darwin-x64.tar.gz"
@@ -14,6 +14,9 @@ qemu_dir          = "xpack-qemu-arm-7.0.0-1"
 openocd_url       = "https://github.com/xpack-dev-tools/openocd-xpack/releases/download/v0.10.0-15/xpack-openocd-0.10.0-15-darwin-x64.tar.gz"
 openocd_tar       = "xpack-openocd-0.10.0-15-darwin-x64.tar.gz"
 openocd_dir       = "xpack-openocd-0.10.0-15"
+
+astyle_svn_url    = "http://svn.code.sf.net/p/astyle/code/tags/3.1/AStyle/"
+astyle_dir        = "astyle"
 
 if os.path.isdir(tool_dir) == False:
     os.mkdir(tool_dir)
@@ -44,3 +47,13 @@ if os.path.isdir(openocd_dir) == False:
     print("Extracting xpack-openocd")
     os.system(f"tar -xf {openocd_tar}")
     os.remove(f"./{openocd_tar}")
+
+if os.path.isdir(astyle_dir) == False:
+    os.mkdir(astyle_dir)
+    print("Download Artistic Style C/C++ formatter:")
+    os.system(f"svn checkout {astyle_svn_url} {astyle_dir}")
+    print("Building AStyle:")
+    os.chdir(f"./{astyle_dir}/build/mac/")
+    os.system(f"make")
+    os.chdir("../../../")
+
