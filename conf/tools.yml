@@ -1,0 +1,41 @@
+TOOLS_PATH : /Users/luca/Documents/GitHub/Embedded-Software/test
+
+ARM_GCC :
+  name    : ARM GNU C/C++ compiler
+  version : 10.3-2021.10
+  file    : archive
+  type    : tar
+  url     : https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-mac.tar.bz2
+  archive : gcc-arm-none-eabi-10.3-2021.10-mac.tar.bz2
+  dir     : gcc-arm-none-eabi-10.3-2021.10
+
+QEMU :
+  name    : QEMU for ARM Cortex-M
+  version : 7.0.0-1
+  file    : archive
+  type    : tar
+  url     : https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v7.0.0-1/xpack-qemu-arm-7.0.0-1-darwin-x64.tar.gz
+  archive : xpack-qemu-arm-7.0.0-1-darwin-x64.tar.gz
+  dir     : xpack-qemu-arm-7.0.0-1
+
+OPENOCD :
+  name    : OpenOCD
+  version : 0.10.0-15
+  file    : archive
+  type    : tar
+  url     : https://github.com/xpack-dev-tools/openocd-xpack/releases/download/v0.10.0-15/xpack-openocd-0.10.0-15-darwin-x64.tar.gz
+  archive : xpack-openocd-0.10.0-15-darwin-x64.tar.gz
+  dir     : xpack-openocd-0.10.0-15
+
+ASTYLE :
+  name    : AStyle 
+  version : 3.1
+  file    : repos
+  type    : svn
+  url     : http://svn.code.sf.net/p/astyle/code/tags/3.1/AStyle/
+  dir     : astyle
+  command :
+    # build binary
+    build:
+      path  : astyle/build/mac
+      run   : make

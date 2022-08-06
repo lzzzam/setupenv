@@ -1,59 +1,54 @@
-from genericpath import isdir
+import yaml
 import os
 
-tool_dir = "./tool"
+# load yamel file into dictionary
+tools = yaml.full_load(open('./conf/tools.yml', 'r'))
 
-arm_none_eabi_url = "https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-mac.tar.bz2"
-arm_none_eabi_tar = "gcc-arm-none-eabi-10.3-2021.10-mac.tar.bz2"
-arm_none_eabi_dir = "gcc-arm-none-eabi-10.3-2021.10"
+# read install folder and remove (key,value) pair
+install_folder  = tools["TOOLS_PATH"]
+del tools["TOOLS_PATH"]
 
-qemu_url          = "https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v7.0.0-1/xpack-qemu-arm-7.0.0-1-darwin-x64.tar.gz"
-qemu_tar          = "xpack-qemu-arm-7.0.0-1-darwin-x64.tar.gz"
-qemu_dir          = "xpack-qemu-arm-7.0.0-1"
+# Make install folder if not present
+if os.path.isdir(install_folder) == False:
+    os.mkdir(install_folder)
+    
+os.chdir(install_folder)
 
-openocd_url       = "https://github.com/xpack-dev-tools/openocd-xpack/releases/download/v0.10.0-15/xpack-openocd-0.10.0-15-darwin-x64.tar.gz"
-openocd_tar       = "xpack-openocd-0.10.0-15-darwin-x64.tar.gz"
-openocd_dir       = "xpack-openocd-0.10.0-15"
+for key in tools:
+    # install tool if not already present
+    if os.path.isdir(tools[key]['dir']) == False:
+        
+        print(f"\n")
+        print(f"Installing {key}")
+        print(f"name    : {tools[key]['name']}")
+        print(f"version : {tools[key]['version']}")
+        print(f"file    : {tools[key]['file']}")
+        
+        if tools[key]['file'] == "archive":
+            
+            if tools[key]['type'] == "tar":
+                # download archive, extract and remove
+                os.system(f"wget {tools[key]['url']} -q --show-progress")
+                os.system(f"tar -xf {tools[key]['archive']}")
+                os.remove(f"./{tools[key]['archive']}")
+                
+        elif tools[key]['file'] == "repos":
+            
+            if tools[key]['type'] == "svn":
+                # check out svn repos into specified folders
+                os.system(f"svn checkout {tools[key]['url']} {tools[key]['dir']}")
+        
+        # Execute extra commands if present
+        if 'command' in tools[key]:
 
-astyle_svn_url    = "http://svn.code.sf.net/p/astyle/code/tags/3.1/AStyle/"
-astyle_dir        = "astyle"
-
-if os.path.isdir(tool_dir) == False:
-    os.mkdir(tool_dir)
-
-os.chdir(tool_dir)
-
-if os.path.isdir(arm_none_eabi_dir) == False:
-    os.mkdir(arm_none_eabi_dir)
-    print("Download GNU C/C++ ARM Toolchain:")
-    os.system(f"wget {arm_none_eabi_url} -q --show-progress")
-    print("Extracting compiler ")
-    os.system(f"tar -xf {arm_none_eabi_tar}")
-    os.remove(f"./{arm_none_eabi_tar}")
-    print("")
-
-if os.path.isdir(qemu_dir) == False:
-    os.mkdir(qemu_dir)
-    print("Download QEMU for ARM Cortex-M:")
-    os.system(f"wget {qemu_url} -q --show-progress")
-    print("Extracting xpack-qemu-arm ")
-    os.system(f"tar -xf {qemu_tar}")
-    os.remove(f"./{qemu_tar}")
-
-if os.path.isdir(openocd_dir) == False:
-    os.mkdir(openocd_dir)
-    print("Download open On-Chip Debugger:")
-    os.system(f"wget {openocd_url} -q --show-progress")
-    print("Extracting xpack-openocd")
-    os.system(f"tar -xf {openocd_tar}")
-    os.remove(f"./{openocd_tar}")
-
-if os.path.isdir(astyle_dir) == False:
-    os.mkdir(astyle_dir)
-    print("Download Artistic Style C/C++ formatter:")
-    os.system(f"svn checkout {astyle_svn_url} {astyle_dir}")
-    print("Building AStyle:")
-    os.chdir(f"./{astyle_dir}/build/mac/")
-    os.system(f"make")
-    os.chdir("../../../")
-
+            for cmd in tools[key]['command']:
+                
+                print(f"Executing {cmd}:")
+                
+                # change path if requested and run command
+                if 'path' in tools[key]['command'][cmd]:
+                    os.chdir(tools[key]['command'][cmd]['path'])
+                    os.system(tools[key]['command'][cmd]['run'])
+                    os.chdir(install_folder)
+                else:
+                    os.system(tools[key]['command'][cmd]['run'])
