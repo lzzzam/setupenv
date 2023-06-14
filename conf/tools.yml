@@ -39,3 +39,12 @@ ASTYLE :
     build:
       path  : astyle/build/mac
       run   : make
+
+CMAKE:
+  name    : CMake
+  version : 3.26.4
+  file    : archive
+  type    : tar
+  url     : https://github.com/Kitware/CMake/releases/download/v3.26.4/cmake-3.26.4-macos10.10-universal.tar.gz
+  archive : cmake-3.26.4-macos10.10-universal.tar.gz
+  dir     : cmake-3.26.4
